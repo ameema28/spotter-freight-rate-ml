@@ -27,3 +27,14 @@
 - Hours: Phase 2 = 1.9h
 - Running total: 2.65 / 8.0
 
+### Phase 3 Split & baseline: DONE
+- Step 0: DATE_COL imported from config; distance_band() (edges in config) with safety check; Phase 2 tests re-run, unchanged; notebook 02 broken test cell removed, Run All clean
+- Step 1: time_split(); decision 33,718 → 4,759 (Aug); main 38,477 → 9,523 (Sep–Oct); overlap refused
+- Step 2: MAE/MAPE/RMSE/bias, toy-checked by hand, match sklearn, bad inputs rejected
+- Step 3: baselines.py; full-file flag reproduces 677 (337/340); per-fold flags 465 / 533 identical to full-file flags (robust rule)
+- Step 4–6: run_fold/run_split; cleaning saw training rows only (33,718 / 38,477); B1 bar MAE $140.53, MAPE 6.40% (main, all rows)
+- Findings: label errors = 1.5% rows, 96.7% of squared error; no Sep→Oct drift on clean rows; random split harsher for B1 (MAE $101 vs $85) due to monthly price levels (bias +$134 Jan, −$112 Jun) → market_index is the model's main job in Phase 4
+- Quiz: 8 Phase 3 Q&As appended to notes/QUIZ_BANK.md
+- Hours: Phase 3 = 1.4h
+- Day 1 total: 0.75 + 1.9 + 1.4 = 4.05h
+- Running total: 4.05 / 8.0
