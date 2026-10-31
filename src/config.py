@@ -22,6 +22,7 @@ DECEMBER_PATH = DATA_DIR / "december_chart_inputs.csv"
 
 # Final deliverable
 PREDICTIONS_PATH = PROJECT_ROOT / "validation_predictions.csv"
+DECEMBER_OUTPUT_PATH = OUTPUT_DIR / "december_chart_inputs.csv"   # filled copy; data/ original never modified
 
 # Column names used across scripts
 TARGET = "posted_rate"

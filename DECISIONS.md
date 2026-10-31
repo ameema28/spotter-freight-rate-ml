@@ -8,3 +8,4 @@
 | D4 | Setup | Data in repo | Inputs, PDF and Spotter README git-ignored; outputs committed | Data belongs to Spotter; reviewers already have it; originals backed up locally |
 | D5 | Setup | Requirements | Spotter's ranges kept; `scikit-learn==1.9.1` pinned exactly | The library that produces predictions must match exactly for reproducible results |
 | D6 | Setup | Random seed | `SEED = 42` in `config.py`, passed as `random_state` everywhere (+ `np.random.seed`) | Identical results every run; later rerun with 2–3 seeds to show stability |
+| D7 | Setup | Filled December file location | Read blank `data/december_chart_inputs.csv`; write filled copy to `outputs/december_chart_inputs.csv`; score.py run with that path (documented in README) | Never overwrite inputs; deliverable committed in outputs/ (data/*.csv is git-ignored); score.py accepts the path as an argument |
