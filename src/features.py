@@ -8,6 +8,8 @@ Every rule here is logged in DECISIONS.md (D10-D18).
 """
 from __future__ import annotations
 
+from config import DATE_COL, DISTANCE_BAND_EDGES   # one source of truth (housekeeping)
+
 import pandas as pd
 
 KNOWN_EQUIPMENT = {"Dry Van", "Flatbed", "Reefer"}   # D14
@@ -17,6 +19,24 @@ def fix_weight_sign(weight: pd.Series) -> pd.Series:
     """D10: negative weights are sign errors, so take the absolute value.
     Missing values stay missing here (abs of NaN is NaN)."""
     return weight.abs()
+
+
+def distance_band(distance: pd.Series) -> pd.Series:
+    """D13: put each distance into a band, e.g. 360 -> (250, 500].
+
+    Uses only distance (a feature, no prices), so it is safe on any file.
+    pd.cut returns NaN for a distance outside the edges or a missing one;
+    a NaN band would silently break the price table later, so stop loudly.
+    """
+    bands = pd.cut(distance, DISTANCE_BAND_EDGES)        # right edge included
+    if bands.isna().any():
+        bad = distance[bands.isna()]
+        raise ValueError(
+            f"{len(bad)} distance(s) missing or outside "
+            f"{DISTANCE_BAND_EDGES[0]}-{DISTANCE_BAND_EDGES[-1]} mi, "
+            f"e.g. {bad.head().tolist()}"
+        )
+    return bands
 
 
 def city_coordinates(df: pd.DataFrame) -> pd.DataFrame:
@@ -44,9 +64,6 @@ def fit_cleaning(train_df: pd.DataFrame) -> dict:
         "city_coords": {city: [float(row.lat), float(row.lon)]
                         for city, row in coords.iterrows()},   # D15
     }
-
-
-DATE_COL = "date"
 
 
 def fill_market_index(df: pd.DataFrame) -> pd.Series:

@@ -18,11 +18,12 @@
 - Checks 0–10 run in notebooks/02_eda.ipynb; every brief number reproduced or corrected
 - Confirmed: 292/145 negative weights (sign errors); 300/165 missing weight; 374/249 missing market_index (random; validation ≈2–3× more gaps); no duplicates; dates continuous, validation ≈25% denser per day
 - New findings: 70-mile distance floor; coordinates synthetic but consistent; 677 train rows (1.41%) priced 2–6× off (consistent with label errors); market_index = daily level + weekly cycle (Thu high, Sun/Mon low) + late-July drop; quote_signal flips by month and is noise in Aug (validation looks like Aug); 8 cities only in validation (12.1% rows), Laredo outside the training map
-- Decisions D10–D18 logged
+- Decisions D10–D19 logged
 - src/features.py: fit_cleaning() + clean() (+ add_coordinates, daily_market_index); tested on train, validation and December; fold rehearsal (Jan–Jul → Aug–Oct) confirms no leakage; 0 gaps in model columns
 - Bug found and fixed: test row-selection returned object dtype; coordinates also forced to float64 in add_coordinates
 - Day-3 sanity band for December: ≈750–950, small weekly wiggle (chart y-axis zooms)
+- Distance bands recorded: [0, 250, 500, 1000, 2000, 4000] mi (max train distance 3,439.8); the 677 count is from the full file, not per fold
 - Quiz: 8 Phase 2 Q&As appended to notes/QUIZ_BANK.md
-- Hours: Phase 2 = __h
-- Running total: __ / 8.0
+- Hours: Phase 2 = 1.9h
+- Running total: 2.65 / 8.0
 

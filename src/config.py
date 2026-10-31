@@ -29,5 +29,10 @@ TARGET = "posted_rate"
 DATE_COL = "date"
 ID_COL = "load_id"
 
+# Distance bands for the expected-price table (D13).
+# pd.cut includes each band's RIGHT edge: (0, 250], (250, 500], ...
+# Max training distance is 3,439.8 mi, so 4,000 covers everything seen so far.
+DISTANCE_BAND_EDGES = [0, 250, 500, 1000, 2000, 4000]
+
 # Reproducibility: pass random_state=SEED to every model/sampler.
 SEED = 42
