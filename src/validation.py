@@ -12,7 +12,7 @@ import pandas as pd
 import numpy as np
 import baselines
 import features
-from config import DATE_COL, ID_COL, TARGET
+from config import DATE_COL, ID_COL, SEED, TARGET
 
 @dataclass(frozen=True)          # frozen = the boundaries can't be changed by accident
 class Fold:
@@ -66,6 +66,17 @@ def split_summary(train: pd.DataFrame, test: pd.DataFrame, fold: Fold) -> pd.Dat
         rows.append({"fold": fold.name, "side": side, "rows": len(part),
                      "first": d.min().date(), "last": d.max().date()})
     return pd.DataFrame(rows)
+
+
+def random_split(df: pd.DataFrame, n_test: int, seed: int = SEED) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """COMPARISON ONLY (D26): n_test random rows as the test set, the rest as training.
+    This mixes later months into training, which a real forecast can never do.
+    Used only to measure how much a random split overstates accuracy."""
+    if not df.index.is_unique:
+        raise ValueError("Index must be unique to split by row")
+    test = df.sample(n=n_test, random_state=seed)
+    train = df.drop(index=test.index)
+    return train.copy(), test.copy()
 
 
 # ---------------------------------------------------------------------------
@@ -126,20 +137,23 @@ def score(y_true, y_pred) -> dict:
 # ---------------------------------------------------------------------------
 
 def run_fold(raw: pd.DataFrame, fold: Fold, make_model, drop_errors: bool = True) -> dict:
-    """split -> fit_cleaning(train only) -> clean both sides -> learn price table
-    from train, drop flagged rows from TRAINING only (D13) -> fit -> predict the
-    holdout in dollars -> check -> score on ALL holdout rows.
-
-    make_model is a CLASS (e.g. baselines.SegmentMedianRpm), not a fitted model:
-    a fresh model is built for every fold, so nothing learned can leak between folds.
-    """
+    """Time-based fold: split by date, then run the shared pipeline."""
     train_raw, test_raw = time_split(raw, fold)
+    return run_split(train_raw, test_raw, fold.name, make_model, drop_errors)
 
+
+def run_split(train_raw: pd.DataFrame, test_raw: pd.DataFrame, split_name: str,
+              make_model, drop_errors: bool = True) -> dict:
+    """The shared pipeline for ANY split (time or random), so they're compared fairly:
+    fit_cleaning(train only) -> clean both sides -> learn price table from train,
+    drop flagged rows from TRAINING only (D13) -> fit -> predict in dollars ->
+    check -> score on ALL holdout rows.
+    make_model is a CLASS, so every split gets a fresh, unfitted model."""
     learned = features.fit_cleaning(train_raw)              # training rows only
     if learned["n_rows"] != len(train_raw):
         raise RuntimeError("fit_cleaning saw a different number of rows than the training side")
     train = features.clean(train_raw, learned)
-    test = features.clean(test_raw, learned)                # same learned values, never re-learned
+    test = features.clean(test_raw, learned)
 
     table = baselines.fit_price_table(train)                # training prices only
     train_flags = baselines.flag_label_errors(train, table)
@@ -155,12 +169,11 @@ def run_fold(raw: pd.DataFrame, fold: Fold, make_model, drop_errors: bool = True
 
     holdout = test.copy()
     holdout["pred"] = pred
-    # REPORTING ONLY (the labelled clean-only score in Step 5): flag holdout rows
-    # with the TRAINING table. Never feeds back into training or prediction.
+    # REPORTING ONLY: label holdout rows with the TRAINING table for the clean-only score.
     holdout["is_label_error"] = baselines.flag_label_errors(test, table)["is_error"].to_numpy()
 
     return {
-        "fold": fold.name,
+        "fold": split_name,
         "model": model.name,
         "drop_errors": drop_errors,
         "cleaning_rows": learned["n_rows"],
@@ -168,7 +181,7 @@ def run_fold(raw: pd.DataFrame, fold: Fold, make_model, drop_errors: bool = True
         "dropped": int(train_flags["is_error"].sum()) if drop_errors else 0,
         "fit_rows": len(train_fit),
         "test_rows": len(test),
-        "scores": score(holdout[TARGET], pred),             # ALL holdout rows (D13)
+        "scores": score(holdout[TARGET], pred),
         "holdout": holdout,
     }
 
