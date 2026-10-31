@@ -7,13 +7,10 @@ rows; cleaning happens AFTER the split (fit_cleaning on the train side only),
 so no held-out row can influence anything learned.
 """
 from __future__ import annotations
-
 from dataclasses import dataclass
-
 import pandas as pd
-
+import numpy as np
 from config import DATE_COL, ID_COL
-
 
 @dataclass(frozen=True)          # frozen = the boundaries can't be changed by accident
 class Fold:
@@ -67,3 +64,56 @@ def split_summary(train: pd.DataFrame, test: pd.DataFrame, fold: Fold) -> pd.Dat
         rows.append({"fold": fold.name, "side": side, "rows": len(part),
                      "first": d.min().date(), "last": d.max().date()})
     return pd.DataFrame(rows)
+
+
+# ---------------------------------------------------------------------------
+# Metrics (D22). All in DOLLARS: predictions are converted back to $ before
+# scoring, whatever scale a model trains on. Spotter's metric is unknown, so
+# we report all four; MAE is primary, MAPE second (our choice, not theirs).
+# Written by hand (one line each) so every number is explainable; Step 2
+# cross-checks them against scikit-learn.
+# ---------------------------------------------------------------------------
+
+def _check(y_true, y_pred) -> tuple[np.ndarray, np.ndarray]:
+    """Turn inputs into float arrays and refuse anything that would give a misleading score."""
+    t = np.asarray(y_true, dtype=float)
+    p = np.asarray(y_pred, dtype=float)
+    if t.shape != p.shape:
+        raise ValueError(f"Length mismatch: {t.shape} true vs {p.shape} predicted")
+    if not (np.isfinite(t).all() and np.isfinite(p).all()):
+        raise ValueError("NaN or infinite values in true or predicted rates")
+    if (t <= 0).any():
+        raise ValueError("True rates must be > 0 (MAPE divides by them)")
+    return t, p
+
+
+def mae(y_true, y_pred) -> float:
+    """Mean absolute error: average dollars off per load."""
+    t, p = _check(y_true, y_pred)
+    return float(np.mean(np.abs(p - t)))
+
+
+def mape(y_true, y_pred) -> float:
+    """Mean absolute percentage error, in % (sklearn returns a FRACTION; we use %)."""
+    t, p = _check(y_true, y_pred)
+    return float(np.mean(np.abs(p - t) / t) * 100)
+
+
+def rmse(y_true, y_pred) -> float:
+    """Root mean squared error: like MAE, but big misses count extra."""
+    t, p = _check(y_true, y_pred)
+    return float(np.sqrt(np.mean((p - t) ** 2)))
+
+
+def bias(y_true, y_pred) -> float:
+    """Mean signed error, predicted minus true. Positive = we over-price on average."""
+    t, p = _check(y_true, y_pred)
+    return float(np.mean(p - t))
+
+
+METRICS = {"MAE": mae, "MAPE_%": mape, "RMSE": rmse, "bias": bias}
+
+
+def score(y_true, y_pred) -> dict:
+    """All four metrics at once, as {name: value}."""
+    return {name: fn(y_true, y_pred) for name, fn in METRICS.items()}
