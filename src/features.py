@@ -60,6 +60,7 @@ def fit_cleaning(train_df: pd.DataFrame) -> dict:
     weight = fix_weight_sign(train_df["weight"])        # flip BEFORE the median
     coords = city_coordinates(train_df)
     return {
+        "n_rows": int(len(train_df)),                   # evidence: how many rows it learned from
         "weight_median": float(weight.median()),        # D11 (median skips NaN)
         "city_coords": {city: [float(row.lat), float(row.lon)]
                         for city, row in coords.iterrows()},   # D15
