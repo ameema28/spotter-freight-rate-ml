@@ -1,0 +1,13 @@
+fold,model,train_label_errors,scope,rows,MAE,MAPE_%,RMSE,bias
+decision,B0 global median rate,excluded,all,4759,1111.3663,70.9781,1506.8797,-309.1577
+decision,B0 global median rate,excluded,clean-only,4691,1074.4532,68.3899,1356.3146,-283.1931
+decision,B1 median rpm by equipment x band,excluded,all,4759,136.6032,6.3886,621.9936,9.6783
+decision,B1 median rpm by equipment x band,excluded,clean-only,4691,87.2458,3.9844,122.9408,38.1443
+main,B0 global median rate,excluded,all,9523,1148.9012,70.208,1569.0014,-364.5952
+main,B0 global median rate,excluded,clean-only,9379,1107.3047,67.7655,1414.8197,-332.3005
+main,B1 median rpm by equipment x band,excluded,all,9523,140.5318,6.4001,638.8196,-43.1181
+main,B1 median rpm by equipment x band,excluded,clean-only,9379,85.0061,3.8969,116.3995,-9.5531
+decision,B0 global median rate,kept,all,4759,1111.3514,70.9027,1507.3191,-311.2927
+decision,B0 global median rate,kept,clean-only,4691,1074.4426,68.3174,1356.762,-285.3281
+decision,B1 median rpm by equipment x band,kept,all,4759,136.6097,6.389,621.9907,9.6941
+decision,B1 median rpm by equipment x band,kept,clean-only,4691,87.2525,3.9848,122.9326,38.16

@@ -171,3 +171,37 @@ def run_fold(raw: pd.DataFrame, fold: Fold, make_model, drop_errors: bool = True
         "scores": score(holdout[TARGET], pred),             # ALL holdout rows (D13)
         "holdout": holdout,
     }
+
+
+# ---------------------------------------------------------------------------
+# Reporting (D25). Headline = ALL holdout rows (D13). Clean-only is an extra,
+# clearly labelled row showing how much the label errors inflate each metric.
+# ---------------------------------------------------------------------------
+
+def results_table(results: list[dict]) -> pd.DataFrame:
+    """One row per (run, scope) with the four metrics. Same metrics, same rows, every model."""
+    rows = []
+    for r in results:
+        h = r["holdout"]
+        for scope, part in [("all", h), ("clean-only", h[~h["is_label_error"]])]:
+            rows.append({"fold": r["fold"], "model": r["model"],
+                         "train_label_errors": "excluded" if r["drop_errors"] else "kept",
+                         "scope": scope, "rows": len(part),
+                         **score(part[TARGET], part["pred"])})
+    return pd.DataFrame(rows)
+
+
+def breakdown(holdout: pd.DataFrame, by: str) -> pd.DataFrame:
+    """Metrics per group of a scored holdout: by 'equipment', 'band' or 'month'.
+    Bands keep their natural order (0-250 first), unlike plain text sorting."""
+    h = holdout.copy()
+    if by == "band":
+        h["band"] = features.distance_band(h["distance"])
+    elif by == "month":
+        h["month"] = h[DATE_COL].dt.strftime("%Y-%m")
+    rows = []
+    for key, g in h.groupby(by, observed=True, sort=True):
+        rows.append({by: str(key), "rows": len(g),
+                     "label_errors": int(g["is_label_error"].sum()),
+                     **score(g[TARGET], g["pred"])})
+    return pd.DataFrame(rows)
