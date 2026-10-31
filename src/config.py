@@ -34,5 +34,10 @@ ID_COL = "load_id"
 # Max training distance is 3,439.8 mi, so 4,000 covers everything seen so far.
 DISTANCE_BAND_EDGES = [0, 250, 500, 1000, 2000, 4000]
 
+# Label-error rule (D13): factor = rpm / expected rpm for the load's equipment x band.
+# A row is flagged if the factor is below LOW or above HIGH.
+LABEL_ERROR_LOW = 0.5
+LABEL_ERROR_HIGH = 2.0
+
 # Reproducibility: pass random_state=SEED to every model/sampler.
 SEED = 42
