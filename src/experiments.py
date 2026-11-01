@@ -1,13 +1,12 @@
 """
-experiments.py: one row per experiment in outputs/phase4_experiments.csv.
-Every number in the report must trace to a row here. Re-running the same
-experiment REPLACES its row (no duplicates).
+experiments.py: one row per experiment in a log CSV (default outputs/phase4_experiments.csv; Phase 5 passes outputs/phase5_stability.csv).
 """
 from __future__ import annotations
 
 import validation
 import pandas as pd
 import numpy as np
+from pathlib import Path
 from config import OUTPUT_DIR, TARGET
 from validation import score
 
@@ -27,22 +26,26 @@ def experiment_row(result: dict, target: str, features: str, settings: str) -> d
             "clean_MAE": score(clean[TARGET], clean["pred"])["MAE"]}
 
 
-def log_experiments(rows: list[dict]) -> pd.DataFrame:
-    """Merge new rows into the CSV, replacing any row with the same KEY."""
+def log_experiments(rows: list[dict], path=None) -> pd.DataFrame:
+    """Merge new rows into the CSV at `path`, replacing any row with the same KEY.
+    path=None means LOG_PATH (the Phase 4 log), so Phase 4 code behaves exactly as before.
+    (None, not LOG_PATH, as the default: a default value is frozen when Python reads the
+    function, so None keeps it pointing at whatever LOG_PATH is when the call happens.)"""
+    path = LOG_PATH if path is None else Path(path)
     new = pd.DataFrame(rows, columns=COLUMNS)
-    if LOG_PATH.exists():
-        old = pd.read_csv(LOG_PATH)
+    if path.exists():
+        old = pd.read_csv(path)
         key = lambda d: d[KEY].astype(str).agg("|".join, axis=1)
         new = pd.concat([old[~key(old).isin(key(new))], new], ignore_index=True)
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    new.round(4).to_csv(LOG_PATH, index=False)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    new.round(4).to_csv(path, index=False)
     return new
 
 
-def run_walk(raw, folds, make, target, features, settings, drop_errors=True) -> list[dict]:
-    """Run one model on every walk-forward fold and log one row per fold."""
+def run_walk(raw, folds, make, target, features, settings, drop_errors=True, log_path=None) -> list[dict]:
+    """Run one model on every walk-forward fold and log one row per fold to log_path (default: Phase 4 log)."""
     results = [validation.run_fold(raw, f, make, drop_errors) for f in folds]
-    log_experiments([experiment_row(r, target, features, settings) for r in results])
+    log_experiments([experiment_row(r, target, features, settings) for r in results], path=log_path)
     return results
 
 

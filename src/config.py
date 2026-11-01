@@ -44,3 +44,7 @@ SEED = 42
 
 # Decision 14c: trailing window for the smoothed market feature (fixed in advance, not tuned)
 MARKET_WINDOW_DAYS = 28
+
+# Phase 5 logs (decision 1a): same schema as phase4_experiments.csv, plus a bootstrap summary file
+PHASE5_LOG_PATH = OUTPUT_DIR / "phase5_stability.csv"
+PHASE5_BOOTSTRAP_PATH = OUTPUT_DIR / "phase5_bootstrap.csv"

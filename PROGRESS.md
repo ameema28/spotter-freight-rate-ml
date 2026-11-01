@@ -51,5 +51,18 @@
 - December look: 811.84–831.44, weekday pattern (Thu high, Sun low); validation 12,000 preds finite > 0, median $2,031
 - Bugs fixed: model name missing "-market_index" (fixed, re-checked); ratio print placeholder (read from $ values)
 - Decisions D30–D46 logged; 63 experiment rows
+- Quiz: skipped by PACE rule (built after submission)
 - Hours: Phase 4 = 1.5h
 - Running total: 4.05 + 1.5 = 5.55 / 8.0
+
+### Phase 5 Stability checks: DONE
+- experiments.log_experiments/run_walk take a log path; Phase 5 rows in outputs/phase5_stability.csv (27), bootstrap in outputs/phase5_bootstrap.csv (24); Phase 4 log unchanged (fingerprint)
+- Determinism: seed 42 vs 1 on wf-Aug, max prediction difference 0 → seed repeats dropped (D48)
+- Reproduced: final per-fold MAEs 155.81/212.15/119.38/89.99, Sep–Oct 98.34; NO-WEEKDAY matches Phase 4 on 4/4 folds
+- Re-checks on the final model: tuned settings only −$0.11 → D39 REVERSED to library defaults (D52); label errors kept +$7.59 → D38 confirmed (D53); weekday +$1.42, 3/4 → kept (D54)
+- Paired day-block bootstrap (1,000, seed 42): label errors robust [+6.34, +8.68]; weekday [−1.26, +3.91] and settings [−0.34, +0.11] within noise; row-level intervals far narrower (rows overstate certainty)
+- Third look Sep–Oct (report only): submitted model 98.57 / 4.34% / clean 42.53 vs B1 140.53 / 6.40%
+- Decisions D47–D55 logged; D6, D39, D42 amended
+- Quiz: skipped by PACE rule (built after submission)
+- Hours: Phase 5 = 0.62h
+- Running total: 5.55 + 0.62 = 6.17 / 8.0
