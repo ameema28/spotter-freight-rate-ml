@@ -41,3 +41,6 @@ LABEL_ERROR_HIGH = 2.0
 
 # Reproducibility: pass random_state=SEED to every model/sampler.
 SEED = 42
+
+# Decision 14c: trailing window for the smoothed market feature (fixed in advance, not tuned)
+MARKET_WINDOW_DAYS = 28

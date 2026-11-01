@@ -20,7 +20,7 @@
 - New findings: 70-mile distance floor; coordinates synthetic but consistent; 677 train rows (1.41%) priced 2–6× off (consistent with label errors); market_index = daily level + weekly cycle (Thu high, Sun/Mon low) + late-July drop; quote_signal flips by month and is noise in Aug (validation looks like Aug); 8 cities only in validation (12.1% rows), Laredo outside the training map
 - Decisions D10–D19 logged
 - src/features.py: fit_cleaning() + clean() (+ add_coordinates, daily_market_index); tested on train, validation and December; fold rehearsal (Jan–Jul → Aug–Oct) confirms no leakage; 0 gaps in model columns
-- Bug found and fixed: test row-selection returned object dtype; coordinates also forced to float64 in add_coordinates
+- Bug found and fixed: test row-selection returned object dtype; coordinates also forced to float64 in add_coordinates; re-tested after fix (12c + Step 13), passed
 - Day-3 sanity band for December: ≈750–950, small weekly wiggle (chart y-axis zooms)
 - Distance bands recorded: [0, 250, 500, 1000, 2000, 4000] mi (max train distance 3,439.8); the 677 count is from the full file, not per fold
 - Quiz: 8 Phase 2 Q&As appended to notes/QUIZ_BANK.md
@@ -38,3 +38,18 @@
 - Hours: Phase 3 = 1.4h
 - Day 1 total: 0.75 + 1.9 + 1.4 = 4.05h
 - Running total: 4.05 / 8.0
+
+## Day 2 (2026-11-01)
+
+### Phase 4 Features & first model: DONE
+- Pre-checks: Nov–Dec market_index inside training range (Sep–Oct 0.25% below the Jan–Aug min, 26.8% in its low tail); quote_signal 0 missing; smallest price-table cell 341 / 386 / 481 rows
+- src/models.py (build_features, S1, HGBRate), src/experiments.py (log, run_walk, walk_summary), features.trailing_market_mean, validation.WALK_FOLDS, config.MARKET_WINDOW_DAYS
+- Checks passed: B1 reproduces 136.60 / 140.53; predict() blind to posted_rate (identical with the column deleted); trailing mean matches a hand calculation; gaps refused
+- Main checkpoint 1 FAILED: market model 188.31 vs B1 140.53 (bias −5.6%) → market_index link broke after the late-July drop → dropped (D40)
+- Main checkpoint 2 (pre-registered, disclosed): final model MAE 98.34 / MAPE 4.33% / clean 42.31 vs B1 140.53 / 6.40% / 85.01
+- Random vs time: random harsher (67.5–68.1 vs 42.3 clean); unseen city cost $0.57; importance: distance > equipment > weight > locations > weekday
+- December look: 811.84–831.44, weekday pattern (Thu high, Sun low); validation 12,000 preds finite > 0, median $2,031
+- Bugs fixed: model name missing "-market_index" (fixed, re-checked); ratio print placeholder (read from $ values)
+- Decisions D30–D46 logged; 63 experiment rows
+- Hours: Phase 4 = 1.5h
+- Running total: 4.05 + 1.5 = 5.55 / 8.0

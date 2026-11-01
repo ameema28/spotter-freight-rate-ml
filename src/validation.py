@@ -32,6 +32,16 @@ MAIN_FOLD = Fold("main", "2025-01-01", "2025-08-31", "2025-09-01", "2025-10-31")
 # into the main holdout.
 DECISION_FOLD = Fold("decision", "2025-01-01", "2025-07-31", "2025-08-01", "2025-08-31")
 
+# Decision 15b: walk-forward decision folds. Each tests ONE month, trains on everything
+# before it, and all end by Aug, so the Sep-Oct holdout stays untouched.
+# wf-Aug has the same dates as DECISION_FOLD (a reproducibility check).
+WALK_FOLDS = [
+    Fold("wf-May", "2025-01-01", "2025-04-30", "2025-05-01", "2025-05-31"),
+    Fold("wf-Jun", "2025-01-01", "2025-05-31", "2025-06-01", "2025-06-30"),
+    Fold("wf-Jul", "2025-01-01", "2025-06-30", "2025-07-01", "2025-07-31"),
+    Fold("wf-Aug", "2025-01-01", "2025-07-31", "2025-08-01", "2025-08-31"),
+]
+
 
 def time_split(df: pd.DataFrame, fold: Fold) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Return (train_rows, test_rows) as COPIES of the raw rows for this fold.

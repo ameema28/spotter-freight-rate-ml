@@ -1,5 +1,5 @@
 """
-features.py: cleaning rules shared by training AND prediction (D1, D18).
+features.py: cleaning rules shared by training AND prediction (D10–D18, D23).
 
     learned = fit_cleaning(train_df)   # learn values from TRAINING rows only
     cleaned = clean(df, learned)       # apply the same rules to any file
@@ -8,8 +8,8 @@ Every rule here is logged in DECISIONS.md (D10-D18).
 """
 from __future__ import annotations
 
-from config import DATE_COL, DISTANCE_BAND_EDGES   # one source of truth (housekeeping)
-
+from config import DATE_COL, DISTANCE_BAND_EDGES   # (existing line, unchanged)
+import numpy as np                                  # add below the pandas import
 import pandas as pd
 
 KNOWN_EQUIPMENT = {"Dry Van", "Flatbed", "Reefer"}   # D14
@@ -100,6 +100,28 @@ def daily_market_index(cleaned_df: pd.DataFrame) -> pd.Series:
     """D17: mean market_index per date, from an already-cleaned file.
     Used to give the December file the real December market level from validation."""
     return cleaned_df.groupby(DATE_COL)["market_index"].mean()
+
+
+def trailing_market_mean(daily: pd.Series, dates: pd.Series, window_days: int) -> np.ndarray:
+    """Decision 14c: mean of the DAILY market_index over the `window_days` days ending on
+    each date (that day included). Looks back only; uses features, never prices.
+
+    Stops loudly if a needed day is missing from `daily` (e.g. December predicted
+    without November's history), instead of silently averaging fewer days.
+    Days before the history's first day (early January) are allowed: shorter window.
+    """
+    daily = daily.sort_index()
+    if daily.index.duplicated().any():
+        raise ValueError("Duplicate dates in market history")
+    first = daily.index.min()
+    need = set()
+    for d in pd.to_datetime(pd.Series(dates).unique()):
+        need.update(pd.date_range(max(first, d - pd.Timedelta(days=window_days - 1)), d))
+    missing = need - set(daily.index)
+    if missing:
+        raise ValueError(f"{len(missing)} day(s) missing from market history, e.g. {sorted(missing)[:3]}")
+    rolled = daily.rolling(f"{window_days}D").mean()     # time window (d - 28 days, d]
+    return pd.Series(dates).map(rolled).to_numpy(dtype=float)
 
 
 def clean(df: pd.DataFrame, learned: dict,
