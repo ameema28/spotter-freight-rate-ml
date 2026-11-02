@@ -81,5 +81,17 @@
 - Bug fixed: f-string backslash (Python 3.11) in a scratch script; re-run passed
 - Decisions D56–D64 logged; D48 amended
 - Quiz: skipped by PACE rule (built after submission)
+- Follow-up commit 482d2a5: market_rel path re-checked after the D64 finite-check move (runs on all 4 walk folds; raise check only); D64 amended
 - Hours: Phase 6 = 0.33h
 - Running total: 6.17 + 0.33 = 6.50 / 8.0
+
+### Phase 7 Report (+ Loom script): DONE
+- src/report_numbers.py: every report number printed from outputs/ CSVs with MATCH/MISMATCH vs the plan; "D55 beats B1 on every fold: no" (June B1 by $0.04) → wording changed (D72); D44 $0.57 → $0.56 (D73); final run MISMATCHES: 0
+- Report: 4 A4 pages, DOCX → PDF, both required items (split/validation approach; score.py December chart from project-root PNG); tuned-model checks labelled; gap directions match phase5_bootstrap.csv signs
+- External review fixes: summary overstated "every modelling choice" (D74); tuned-settings interval direction made explicit; rounding note under walk-forward table; "twomonth"/"reportonly" confirmed as text-extraction artefacts, not in the PDF
+- Loom script notes/LOOM_SCRIPT.md: 5 required topics + AI disclosure
+- .gitignore checked: report/ and src/report_numbers.py tracked; notes/ ignored
+- Decisions D65–D74 logged; D44 amended
+- Quiz: skipped by PACE rule (built after submission)
+- Hours: Phase 7 = 0.52h
+- Running total: 6.50 + 0.52 = 7.02 / 8.0
