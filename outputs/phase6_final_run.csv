@@ -1,0 +1,76 @@
+section,item,value
+fit,rows_learned,48000
+fit,first_date,2025-01-01
+fit,last_date,2025-10-31
+fit,label_errors_dropped,677
+fit,dropped_low,337
+fit,dropped_high,340
+fit,fit_rows,47323
+fit,model_name,HGB log_rpm -market_index +weekday
+fit,feature_columns,distance|weight|pickup_lat|pickup_lon|delivery_lat|delivery_lon|eq_Dry Van|eq_Flatbed|eq_Reefer|weekday
+validation,rows,12000
+validation,pred_min,184.61
+validation,pred_max,6821.37
+december,min,818.21
+december,min_date,2025-12-07
+december,max,837.61
+december,max_date,2025-12-04
+december,mean,829.63
+december,in_sanity_band,True
+december,highest_weekday,Thursday
+december,lowest_weekday,Sunday
+december_weekday_mean,Monday,824.5
+december_weekday_mean,Tuesday,830.55
+december_weekday_mean,Wednesday,835.63
+december_weekday_mean,Thursday,837.61
+december_weekday_mean,Friday,832.8
+december_weekday_mean,Saturday,827.67
+december_weekday_mean,Sunday,818.21
+sanity_all,train_rows,48000
+sanity_all,valid_rows,12000
+sanity_all,train_p10,802.6
+sanity_all,pred_p10,809.98
+sanity_all,train_median,2030.76
+sanity_all,pred_median,2029.69
+sanity_all,train_p90,4365.82
+sanity_all,pred_p90,4347.75
+sanity_all,train_med_miles,953.3
+sanity_all,valid_med_miles,953.6
+sanity_Dry Van,train_rows,27202
+sanity_Dry Van,valid_rows,6780
+sanity_Dry Van,train_p10,770.74
+sanity_Dry Van,pred_p10,780.68
+sanity_Dry Van,train_median,1953.04
+sanity_Dry Van,pred_median,1943.21
+sanity_Dry Van,train_p90,4167.17
+sanity_Dry Van,pred_p90,4113.16
+sanity_Dry Van,train_med_miles,957.55
+sanity_Dry Van,valid_med_miles,950.8
+sanity_Flatbed,train_rows,8753
+sanity_Flatbed,valid_rows,2169
+sanity_Flatbed,train_p10,839.13
+sanity_Flatbed,pred_p10,853.81
+sanity_Flatbed,train_median,2076.81
+sanity_Flatbed,pred_median,2090.88
+sanity_Flatbed,train_p90,4480.16
+sanity_Flatbed,pred_p90,4437.48
+sanity_Flatbed,train_med_miles,940.0
+sanity_Flatbed,valid_med_miles,944.7
+sanity_Reefer,train_rows,12045
+sanity_Reefer,valid_rows,3051
+sanity_Reefer,train_p10,867.0
+sanity_Reefer,pred_p10,865.24
+sanity_Reefer,train_median,2196.67
+sanity_Reefer,pred_median,2215.06
+sanity_Reefer,train_p90,4683.66
+sanity_Reefer,pred_p90,4664.29
+sanity_Reefer,train_med_miles,950.2
+sanity_Reefer,valid_med_miles,961.0
+month_2025-11,rows,5836.0
+month_2025-11,pred_median,2044.24
+month_2025-11,med_miles,959.9
+month_2025-12,rows,6164.0
+month_2025-12,pred_median,2019.15
+month_2025-12,med_miles,947.1
+files,validation_predictions_sha256,f7e54d41d43fb4a3360fac10b448efa2bacd6b34c2163bdaca4a4151858a31bc
+files,december_sha256,7bf1bafca076f163f695a8ac47a03d1306470e48592bb0462bc0bd89073e89b7

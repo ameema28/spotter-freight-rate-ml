@@ -66,3 +66,20 @@
 - Quiz: skipped by PACE rule (built after submission)
 - Hours: Phase 5 = 0.62h
 - Running total: 5.55 + 0.62 = 6.17 / 8.0
+
+## Day 3 (2026-11-02)
+
+### Phase 6 Final retrain & output files: DONE
+- Pre-checks: pandas 2.3.3 to_csv lineterminator default None → '\r\n' on Windows; HGB defaults lr 0.1 / max_iter 100; after D64 edits D55 walk folds MATCH 155.73/212.18/119.79/90.07
+- src/train_predict.py (one command): fit_cleaning 48,000 rows (2025-01-01..10-31) → 677 label errors dropped (337 low / 340 high) → 47,323 fit rows; name "HGB log_rpm -market_index +weekday"; 10 columns, one-hot order fixed
+- validation_predictions.csv: 12,000 rows, template order, ID set = template, no duplicates, no index, all > 0 ($184.61–$6,821.37), cents (max diff 0.005); checked on the re-read file
+- outputs/december_chart_inputs.csv: 6 input columns identical as text; 31 unique dates; $818.21 (Sun) – $837.61 (Thu); exact weekly repeat (only weekday varies); Christmas Day priced highest → holiday limitation
+- Sanity (report only): pred median $2,029.69 vs train $2,030.76; median miles 953.6 vs 953.3; equipment medians close; Nov $2,044.24 vs Dec $2,019.15 (Dec loads ~13 mi shorter)
+- Determinism: seed 42 vs 1 on the full fit, max diff 0.0 (validation + December); two runs byte-identical (SHA-256 f7e54d41…, 7bf1bafc…, fc48b52e…); no CR in files
+- score.py passed (12,000 + 31 validated); chart checked against the December numbers; old dummy chart in scratch/ spotted and not used
+- Requirements: all imports covered, pip check clean; .gitignore correct; PNG committed
+- Bug fixed: f-string backslash (Python 3.11) in a scratch script; re-run passed
+- Decisions D56–D64 logged; D48 amended
+- Quiz: skipped by PACE rule (built after submission)
+- Hours: Phase 6 = 0.33h
+- Running total: 6.17 + 0.33 = 6.50 / 8.0

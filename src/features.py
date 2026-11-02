@@ -8,9 +8,10 @@ Every rule here is logged in DECISIONS.md (D10-D18).
 """
 from __future__ import annotations
 
-from config import DATE_COL, DISTANCE_BAND_EDGES   # (existing line, unchanged)
-import numpy as np                                  # add below the pandas import
+from config import DATE_COL, DISTANCE_BAND_EDGES   
 import pandas as pd
+import numpy as np                                  
+
 
 KNOWN_EQUIPMENT = {"Dry Van", "Flatbed", "Reefer"}   # D14
 

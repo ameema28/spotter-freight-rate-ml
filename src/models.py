@@ -50,13 +50,13 @@ def build_features(df: pd.DataFrame, extra: tuple = (), market_daily: pd.Series 
         if market_daily is None:
             raise ValueError("market_28d needs market_daily history")
         X["market_28d"] = features.trailing_market_mean(market_daily, df[DATE_COL], MARKET_WINDOW_DAYS)
-    if not np.isfinite(X.to_numpy()).all():
-        raise ValueError("Features contain NaN or infinite values")
     if "market_rel" in extra:          # today's market vs its own last 28 days: level removed (decision 16b)
         if market_daily is None:
             raise ValueError("market_rel needs market_daily history")
         X["market_rel"] = (df["market_index"].to_numpy(dtype=float)
                            / features.trailing_market_mean(market_daily, df[DATE_COL], MARKET_WINDOW_DAYS))
+    if not np.isfinite(X.to_numpy()).all():
+            raise ValueError("Features contain NaN or infinite values")
     return X
 
 

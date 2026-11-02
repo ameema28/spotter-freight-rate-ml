@@ -1,6 +1,6 @@
 """
-validation.py: time-based splits (D20, D21), metrics and the per-fold
-pipeline (added in later steps).
+validation.py: time-based splits (D20, D21, D37), metrics (D22) and the
+shared per-fold pipeline (D23).
 
 A fold = "train on these dates, test on those dates". Splits work on RAW
 rows; cleaning happens AFTER the split (fit_cleaning on the train side only),

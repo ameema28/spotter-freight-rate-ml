@@ -48,3 +48,6 @@ MARKET_WINDOW_DAYS = 28
 # Phase 5 logs (decision 1a): same schema as phase4_experiments.csv, plus a bootstrap summary file
 PHASE5_LOG_PATH = OUTPUT_DIR / "phase5_stability.csv"
 PHASE5_BOOTSTRAP_PATH = OUTPUT_DIR / "phase5_bootstrap.csv"
+
+# Phase 6 (D62): every number from the final run, so report numbers trace to a file
+PHASE6_RUN_PATH = OUTPUT_DIR / "phase6_final_run.csv"
